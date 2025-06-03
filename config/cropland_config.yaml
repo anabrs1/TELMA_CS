@@ -1,0 +1,32 @@
+data:
+  input_dir: "data/input"
+  output_dir: "outputs/cropland"
+  temp_dir: "data/temp"
+
+land_use:
+  focus_on_cropland_transitions: true
+  cropland_class: 3
+  all_classes: [0, 1, 2, 3, 4, 5, 6, 7, 14, 15, 999]
+  cropland_codes: [211, 212, 213, 241, 242, 243]
+
+preprocessing:
+  resolution: 100
+  crs_epsg: 3035
+  sampling_factor: 1.0
+  random_seed: 42
+
+modeling:
+  test_size: 0.2
+  random_state: 42
+  hyperparameter_tuning: true
+  n_estimators_range: [100, 200, 300]
+  max_depth_range: [20, 30, 40]
+
+validation:
+  metrics: ["roc_auc", "boyce_index"]
+  boyce_nclass: 10
+  boyce_res: 100
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
