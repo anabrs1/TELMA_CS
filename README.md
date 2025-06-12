@@ -83,6 +83,7 @@ Expected input files in the input directory:
 - `transition_12_18.tif` - Land use transitions 2012-2018
 - `land_mask.tif` - Valid land mask
 - Additional covariate files (*.tif)
+- Geopackage files (*.gpkg) - Vector data with spatial features
 
 ## Outputs
 

@@ -57,7 +57,7 @@ def main():
     try:
         logger.info("Step 1: Data Ingestion")
         data_loader = DataLoader(config)
-        datasets = data_loader.load_raster_files(config['data']['input_dir'])
+        datasets = data_loader.load_all_spatial_files(config['data']['input_dir'])
         
         if not data_loader.validate_data_structure(datasets):
             logger.warning("Some recommended data files are missing")

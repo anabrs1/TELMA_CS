@@ -1,6 +1,7 @@
 import rasterio as rio
 import pandas as pd
 import pyarrow.parquet as pq
+import geopandas as gpd
 import glob
 import os
 from pathlib import Path
@@ -25,6 +26,35 @@ class DataLoader:
             except Exception as e:
                 self.logger.error(f"Failed to load {file_path}: {e}")
                 
+        return datasets
+        
+    def load_geopackage_files(self, input_dir):
+        """Load all geopackage files from input directory"""
+        gpkg_files = glob.glob(os.path.join(input_dir, "*.gpkg"))
+        
+        datasets = {}
+        for file_path in gpkg_files:
+            file_name = Path(file_path).stem
+            try:
+                gdf = gpd.read_file(file_path)
+                datasets[file_name] = gdf
+                self.logger.info(f"Loaded geopackage: {file_name} with {len(gdf)} features")
+            except Exception as e:
+                self.logger.error(f"Failed to load {file_path}: {e}")
+                
+        return datasets
+        
+    def load_all_spatial_files(self, input_dir):
+        """Load all spatial files (raster and vector) from input directory"""
+        datasets = {}
+        
+        raster_datasets = self.load_raster_files(input_dir)
+        datasets.update(raster_datasets)
+        
+        gpkg_datasets = self.load_geopackage_files(input_dir)
+        datasets.update(gpkg_datasets)
+        
+        self.logger.info(f"Loaded {len(datasets)} spatial datasets total")
         return datasets
         
     def load_parquet_data(self, file_path):
