@@ -101,6 +101,9 @@ python download_corine_data.py --region andalucia --bbox 2840000 2200000 3140000
 
 # Custom output directory and image size
 python download_corine_data.py --region test --bbox 2840000 2200000 2850000 2210000 --output-dir data/input --size 1024 1024
+
+# With proxy authentication (for corporate networks)
+python download_corine_data.py --region andalucia --bbox 2840000 2200000 3140000 2500000 --proxy-user your_username --proxy-pass your_password
 ```
 
 ## Outputs

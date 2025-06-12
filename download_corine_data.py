@@ -19,6 +19,7 @@ from pathlib import Path
 from tqdm import tqdm
 import logging
 
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,7 @@ def download_corine_layer(layer_key, layer_url, region_name, bbox, output_dir, i
         logger.error(f"Unexpected error downloading {layer_key}: {e}")
         return False
 
-def download_corine_data(region_name, bbox, output_dir="input", layers="all", image_size=(1024, 1024)):
+def download_corine_data(region_name, bbox, output_dir="input", layers="all", image_size=(1024, 1024), proxy_config=None):
     """
     Download CORINE data for a specified region
     
@@ -112,7 +113,15 @@ def download_corine_data(region_name, bbox, output_dir="input", layers="all", im
         output_dir (str): Output directory
         layers (str): Which layers to download ('all', 'clc', 'cha')
         image_size (tuple): Image size (width, height)
+        proxy_config (dict): Proxy configuration with 'http' and 'https' keys
     """
+    
+    if proxy_config:
+        if 'http' in proxy_config:
+            os.environ['http_proxy'] = proxy_config['http']
+        if 'https' in proxy_config:
+            os.environ['https_proxy'] = proxy_config['https']
+        logger.info("Proxy configuration applied")
     
     os.makedirs(output_dir, exist_ok=True)
     logger.info(f"Output directory: {os.path.abspath(output_dir)}")
@@ -163,15 +172,29 @@ def main():
     parser.add_argument('--size', nargs=2, type=int, default=[1024, 1024],
                        metavar=('WIDTH', 'HEIGHT'),
                        help='Image size in pixels (default: 1024 1024)')
+    parser.add_argument('--proxy-user', help='Proxy username')
+    parser.add_argument('--proxy-pass', help='Proxy password')
+    parser.add_argument('--proxy-host', default='ps-sev-usr.cec.eu.int:8012',
+                       help='Proxy host:port (default: ps-sev-usr.cec.eu.int:8012)')
     
     args = parser.parse_args()
+    
+    proxy_config = None
+    if args.proxy_user and args.proxy_pass:
+        proxy_url = f"http://{args.proxy_user}:{args.proxy_pass}@{args.proxy_host}"
+        proxy_config = {
+            'http': proxy_url,
+            'https': proxy_url
+        }
+        logger.info(f"Using proxy: {args.proxy_host}")
     
     successful, failed = download_corine_data(
         region_name=args.region,
         bbox=args.bbox,
         output_dir=args.output_dir,
         layers=args.layers,
-        image_size=tuple(args.size)
+        image_size=tuple(args.size),
+        proxy_config=proxy_config
     )
     
     if failed:
