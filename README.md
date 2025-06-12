@@ -85,6 +85,24 @@ Expected input files in the input directory:
 - Additional covariate files (*.tif)
 - Geopackage files (*.gpkg) - Vector data with spatial features
 
+### CORINE Data Download
+
+Use the included script to download CORINE Land Cover data:
+
+```bash
+# Download all CORINE layers for Andalucía region
+python download_corine_data.py --region andalucia --bbox 2840000 2200000 3140000 2500000
+
+# Download only CLC layers
+python download_corine_data.py --region andalucia --bbox 2840000 2200000 3140000 2500000 --layers clc
+
+# Download only CHA layers  
+python download_corine_data.py --region andalucia --bbox 2840000 2200000 3140000 2500000 --layers cha
+
+# Custom output directory and image size
+python download_corine_data.py --region test --bbox 2840000 2200000 2850000 2210000 --output-dir data/input --size 1024 1024
+```
+
 ## Outputs
 
 - `processed_data.parquet` - Preprocessed sparse data
